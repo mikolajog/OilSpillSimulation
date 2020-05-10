@@ -5,3 +5,6 @@ from django.shortcuts import render
 
 def index(request):
     return render(request, 'oilspillapp/index.html')
+
+def parameters(request):
+    return render(request, 'oilspillapp/parameters.html')
