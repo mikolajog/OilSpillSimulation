@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 
 from src.constants import SEA, LAND
+from src.cell import Cell
 
 
 def makeArrayFromPhoto():
@@ -11,9 +12,9 @@ def makeArrayFromPhoto():
     for i in range(200):
         for j in range(120):
             if np.all(res[j][i] <= [255, 218, 170]) and np.all(res[j][i] >= [255, 218, 170]):
-                newmap[i][j] = SEA
+                newmap[i][j] = Cell(SEA)
             else:
-                newmap[i][j] = LAND
+                newmap[i][j] = Cell(LAND)
 
     return newmap
 
