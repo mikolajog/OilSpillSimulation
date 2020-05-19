@@ -2,6 +2,7 @@ from random import randint
 
 import numpy as np
 from src.constants import SEA, START, LAND, OIL
+from src.makeArrayFromPhoto import makeArrayFromPhoto
 
 
 class Map(object):
@@ -15,14 +16,16 @@ class Map(object):
 
     def reset_to_default_Map(self):
         defaultMap = np.empty((200, 120), dtype=object)
-        for i in range(200):
-            for j in range(120):
-                if i > 50:
-                    defaultMap[i][j] = SEA
-                else:
-                    defaultMap[i][j] = LAND
-        defaultMap[150][70] = START
-
+        # for i in range(200):
+        #     for j in range(120):
+        #         if i > 50:
+        #             defaultMap[i][j] = SEA
+        #         else:
+        #             defaultMap[i][j] = LAND
+        # defaultMap[150][70] = START
+        # print(np.shape(defaultMap))
+        defaultMap = makeArrayFromPhoto()
+        print(defaultMap)
         self.simulationArray = defaultMap
 
     def get_particular_cells_coordinates(self, cell_type):
