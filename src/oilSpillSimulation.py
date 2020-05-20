@@ -43,7 +43,7 @@ class OilSpillSimulation(object):
                 :return True if the simulation should end
         """
 
-        time_delta = self.fps_clock.tick(60)
+        time_delta = self.fps_clock.tick(360)
 
         for event in pygame.event.get():
             if self.started:
@@ -51,9 +51,10 @@ class OilSpillSimulation(object):
                     self.started = False
                     self.board.map.reset_to_default_Map()
                     # hardcoded starting point
-                    self.board.map.set_start_point(X_START,Y_START)
+                    self.board.map.set_start_point(X_START,Y_START,TOTAL_WEIGHT)
                 else:
-                    self.board.map.nextstate()
+                    #self.board.map.nextstate()
+                    self.board.nextstate()
                     self.board.drawStates()
                 # TODO: Calling method drawing on map only
 
