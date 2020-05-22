@@ -3,7 +3,6 @@ import pygame.locals
 import pygame_gui
 import math
 import random
-import time
 
 from src.constants import *
 from src.map import Map
@@ -264,11 +263,12 @@ class Board(object):
         pygame.display.update()
 
     def nextstate(self):
-        self.total_time +=60
-        # self.advection()
+        self.total_time += 3600
+        self.advection()
         # time.sleep(1)
         self.spreading()
         # time.sleep(3)
+        print("#####################"+self.total_time.__str__())
 
     def advection(self):
         alfa = 1.1
@@ -308,25 +308,28 @@ class Board(object):
             up_cell = self.map.simulationArray[i][j-1]
             down_cell = self.map.simulationArray[i][j+1]
 
-            for cell in [left_cell,right_cell,up_cell,down_cell]:
+            for (cell,x,y) in {(left_cell,i-1,j),(right_cell,i+1,j),(up_cell,i,j-1),(down_cell,i,j+1)}:
                 tmp = delta_mass(cell,reference_cell,self.total_time)
-                print(tmp)
-                print(cell.oil_mass_in_cell())
-                print(reference_cell.oil_mass_in_cell())
+                # print(tmp)
+                # print(cell.oil_mass_in_cell())
+                # print(reference_cell.oil_mass_in_cell())
                 if (tmp > 0):
                     # from cell to reference_cell
-                    try:
-                        r = abs(tmp) / cell.oil_mass_in_cell()
-                        for op in cell.oil_points:
-                            theta = random.randrange(0,1)
-                            if theta < r :
-                                reference_cell.oil_points.append(op)
-                                reference_cell.update_cell_type(OIL)
-                                cell.oil_points.remove(op)
-                                if len(cell.oil_points)==0:
-                                    cell.update_cell_type(SEA)
-                    except:
-                        pass
+                    r = abs(tmp) / cell.oil_mass_in_cell()
+                    for op in cell.oil_points:
+                        theta = random.randrange(0,1)
+                        if theta < r :
+                            reference_cell.oil_points.append(op)
+                            reference_cell.update_cell_type(OIL)
+                            cell.oil_points.remove(op)
+
+                            #changing oil point assigned cell
+                            op.assigned_cell = [i,j]
+                            op.relatives_coordinates[0] += (i-x) * 10 #[km]
+                            op.relatives_coordinates[1] += (j-y) * 10 #[km] długość cell
+                            if len(cell.oil_points)==0:
+                                cell.update_cell_type(SEA)
+
                 elif(tmp<0):
                     #from reference_cell to cell
                     r = abs(tmp) / reference_cell.oil_mass_in_cell()
@@ -336,6 +339,11 @@ class Board(object):
                             cell.oil_points.append(op)
                             cell.update_cell_type(OIL)
                             reference_cell.oil_points.remove(op)
+
+                            op.assigned_cell = [x, y]
+                            op.relatives_coordinates[0] += (x - i) * 10  # [km]
+                            op.relatives_coordinates[1] += (y - j) * 10  # [km] długość cell
+
                             if len(reference_cell.oil_points)==0:
                                 reference_cell.update_cell_type(SEA)
 """
