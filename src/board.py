@@ -1,12 +1,14 @@
-import pygame
-import pygame.locals
-import pygame_gui
 import math
 import random
 
+import pygame
+import pygame.locals
+import pygame_gui
+
 from src.constants import *
-from src.map import Map
+from src.simulation_parameters import *
 from src.discretized_oil import DiscretizedOil
+from src.map import Map
 
 
 class Board(object):
@@ -170,9 +172,9 @@ class Board(object):
         self.oil_point_list = DiscretizedOil(100, (X_START, Y_START))
 
         # at the begining all oil poitns are in start cell
-        # coords = self.map.get_particular_cells_coordinates(OIL)
         self.map.simulationArray[X_START][Y_START].oil_points = self.oil_point_list.oil_points_array.copy()
         self.total_time = 0
+
     def textentry_to_label(self, textentry, rect, text):
         textentry.kill()
         textentry = pygame_gui.elements.UILabel(
@@ -198,30 +200,18 @@ class Board(object):
             50 - MARGIN_THICKNESS, 50 - MARGIN_THICKNESS, 1000 + 2 * MARGIN_THICKNESS, 600 + 2 * MARGIN_THICKNESS))
 
         for x, y in self.map.get_particular_cells_coordinates(LAND):
-            # size = (self.box_size, self.box_size)
-            # position = (x * self.box_size, y * self.box_size)
-            # thickness = 1
             pygame.draw.rect(self.surface, GREEN,
                              (x * CELLSIZE + X_MARGIN, y * CELLSIZE + Y_MARGIN, CELLSIZE, CELLSIZE))
 
         for x, y in self.map.get_particular_cells_coordinates(SEA):
-            # size = (self.box_size, self.box_size)
-            # position = (x * self.box_size, y * self.box_size)
-            # thickness = 1
             pygame.draw.rect(self.surface, DARKBLUE,
                              (x * CELLSIZE + X_MARGIN, y * CELLSIZE + Y_MARGIN, CELLSIZE, CELLSIZE))
 
         for x, y in self.map.get_particular_cells_coordinates(OIL):
-            # size = (self.box_size, self.box_size)
-            # position = (x * self.box_size, y * self.box_size)
-            # thickness = 1
             pygame.draw.rect(self.surface, ORANGE,
                              (x * CELLSIZE + X_MARGIN, y * CELLSIZE + Y_MARGIN, CELLSIZE, CELLSIZE))
 
         for x, y in self.map.get_particular_cells_coordinates(START):
-            # size = (self.box_size, self.box_size)
-            # position = (x * self.box_size, y * self.box_size)
-            # thickness = 1
             pygame.draw.rect(self.surface, RED, (x * CELLSIZE + X_MARGIN, y * CELLSIZE + Y_MARGIN, CELLSIZE, CELLSIZE))
 
         # updating the display and making visible changes on the screen
@@ -233,53 +223,46 @@ class Board(object):
             50 - MARGIN_THICKNESS, 50 - MARGIN_THICKNESS, 1000 + 2 * MARGIN_THICKNESS, 600 + 2 * MARGIN_THICKNESS))
 
         for x, y in self.map.get_particular_cells_coordinates(LAND):
-            # size = (self.box_size, self.box_size)
-            # position = (x * self.box_size, y * self.box_size)
-            # thickness = 1
             pygame.draw.rect(self.surface, GREEN,
                              (x * CELLSIZE + X_MARGIN, y * CELLSIZE + Y_MARGIN, CELLSIZE, CELLSIZE))
 
         for x, y in self.map.get_particular_cells_coordinates(SEA):
-            # size = (self.box_size, self.box_size)
-            # position = (x * self.box_size, y * self.box_size)
-            # thickness = 1
             pygame.draw.rect(self.surface, DARKBLUE,
                              (x * CELLSIZE + X_MARGIN, y * CELLSIZE + Y_MARGIN, CELLSIZE, CELLSIZE))
 
         for x, y in self.map.get_particular_cells_coordinates(OIL):
-            # size = (self.box_size, self.box_size)
-            # position = (x * self.box_size, y * self.box_size)
-            # thickness = 1
             pygame.draw.rect(self.surface, ORANGE,
                              (x * CELLSIZE + X_MARGIN, y * CELLSIZE + Y_MARGIN, CELLSIZE, CELLSIZE))
 
         for x, y in self.map.get_particular_cells_coordinates(START):
-            # size = (self.box_size, self.box_size)
-            # position = (x * self.box_size, y * self.box_size)
-            # thickness = 1
             pygame.draw.rect(self.surface, RED, (x * CELLSIZE + X_MARGIN, y * CELLSIZE + Y_MARGIN, CELLSIZE, CELLSIZE))
 
         # updating the display and making visible changes on the screen
         pygame.display.update()
 
     def nextstate(self):
-        self.total_time += 3600
+        """
+        Function performing one step of simulation.
+        """
+        self.total_time += SIMULATION_STEP_TIME
         self.advection()
-        # time.sleep(1)
         self.spreading()
-        # time.sleep(3)
-        print("#####################"+self.total_time.__str__())
 
     def advection(self):
-        alfa = 1.1
-        beta = 0.03
-        print("computing advection")
+        """
+        Function computing and updating position of every oil_point.
+        Computation based on wind and concurrent info saved in each cell.
+        """
+
         for op in self.oil_point_list.oil_points_array:
-            print("hejka")
             print(len(self.oil_point_list.oil_points_array))
             (x, y) = op.assigned_cell
-            delta_r_x = alfa * self.map.simulationArray[x][y].concurrent[0] * math.sin(self.map.simulationArray[x][y].concurrent[1]) + beta * self.map.simulationArray[x][y].wind[0] * math.sin(self.map.simulationArray[x][y].wind[1])
-            delta_r_y = alfa * self.map.simulationArray[x][y].concurrent[0] * math.sin(90 - self.map.simulationArray[x][y].concurrent[1]) + beta * self.map.simulationArray[x][y].wind[0] * math.sin(90 - self.map.simulationArray[x][y].wind[1])
+            delta_r_x = ALPHA * self.map.simulationArray[x][y].concurrent[0] * math.sin(
+                self.map.simulationArray[x][y].concurrent[1]) + BETA * self.map.simulationArray[x][y].wind[
+                0] * math.sin(self.map.simulationArray[x][y].wind[1])
+            delta_r_y = ALPHA * self.map.simulationArray[x][y].concurrent[0] * math.sin(
+                90 - self.map.simulationArray[x][y].concurrent[1]) + BETA * self.map.simulationArray[x][y].wind[
+                0] * math.sin(90 - self.map.simulationArray[x][y].wind[1])
 
             self.map.simulationArray[x][y].oil_points.remove(op)
             if len(self.map.simulationArray[x][y].oil_points) == 0:
@@ -297,45 +280,45 @@ class Board(object):
             self.map.simulationArray[new_x][new_y].update_cell_type(OIL)
             self.map.simulationArray[new_x][new_y].oil_points.append(op)
 
-
     def spreading(self):
+        """
+        Function computing and updating position of every oil_point based on interaction between oil_points.
+        """
         cells_with_oil = self.map.get_particular_cells_coordinates(OIL)
         print(cells_with_oil)
-        for (i,j) in cells_with_oil:
+        for (i, j) in cells_with_oil:
             reference_cell = self.map.simulationArray[i][j]
-            left_cell = self.map.simulationArray[i-1][j]
-            right_cell = self.map.simulationArray[i+1][j]
-            up_cell = self.map.simulationArray[i][j-1]
-            down_cell = self.map.simulationArray[i][j+1]
+            left_cell = self.map.simulationArray[i - 1][j]
+            right_cell = self.map.simulationArray[i + 1][j]
+            up_cell = self.map.simulationArray[i][j - 1]
+            down_cell = self.map.simulationArray[i][j + 1]
 
-            for (cell,x,y) in {(left_cell,i-1,j),(right_cell,i+1,j),(up_cell,i,j-1),(down_cell,i,j+1)}:
-                tmp = delta_mass(cell,reference_cell,self.total_time)
-                # print(tmp)
-                # print(cell.oil_mass_in_cell())
-                # print(reference_cell.oil_mass_in_cell())
-                if (tmp > 0):
+            for (cell, x, y) in {(left_cell, i - 1, j), (right_cell, i + 1, j), (up_cell, i, j - 1),
+                                 (down_cell, i, j + 1)}:
+                tmp = delta_mass(cell, reference_cell, self.total_time)
+                if tmp > 0:
                     # from cell to reference_cell
                     r = abs(tmp) / cell.oil_mass_in_cell()
                     for op in cell.oil_points:
-                        theta = random.randrange(0,1)
-                        if theta < r :
+                        theta = random.randrange(0, 1)
+                        if theta < r:
                             reference_cell.oil_points.append(op)
                             reference_cell.update_cell_type(OIL)
                             cell.oil_points.remove(op)
 
-                            #changing oil point assigned cell
-                            op.assigned_cell = [i,j]
-                            op.relatives_coordinates[0] += (i-x) * 10 #[km]
-                            op.relatives_coordinates[1] += (j-y) * 10 #[km] długość cell
-                            if len(cell.oil_points)==0:
+                            # changing oil point assigned cell
+                            op.assigned_cell = [i, j]
+                            op.relatives_coordinates[0] += (i - x) * 10  # [km]
+                            op.relatives_coordinates[1] += (j - y) * 10  # [km] długość cell
+                            if len(cell.oil_points) == 0:
                                 cell.update_cell_type(SEA)
 
-                elif(tmp<0):
-                    #from reference_cell to cell
+                elif tmp < 0:
+                    # from reference_cell to cell
                     r = abs(tmp) / reference_cell.oil_mass_in_cell()
                     for op in reference_cell.oil_points:
-                        theta = random.randrange(0,1)
-                        if theta < r :
+                        theta = random.randrange(0, 1)
+                        if theta < r:
                             cell.oil_points.append(op)
                             cell.update_cell_type(OIL)
                             reference_cell.oil_points.remove(op)
@@ -344,23 +327,29 @@ class Board(object):
                             op.relatives_coordinates[0] += (x - i) * 10  # [km]
                             op.relatives_coordinates[1] += (y - j) * 10  # [km] długość cell
 
-                            if len(reference_cell.oil_points)==0:
+                            if len(reference_cell.oil_points) == 0:
                                 reference_cell.update_cell_type(SEA)
-"""
-Function responsible for comuputing flowing mass beteen two cells
-"""
+
+
+
+
+
 def delta_mass(cellj, celli, total_time):
-    delta_t = 60 #[s]
-    delta_x = 10000 #[m]
-    mj = cellj.oil_mass_in_cell()
-    mi = celli.oil_mass_in_cell()
+    """
+    Function responsible for comuputing flowing mass between two cells
+    """
+    delta_t = SIMULATION_STEP_TIME
+    delta_x = CELL_LENGTH
+    mass_j = cellj.oil_mass_in_cell()
+    mass_i = celli.oil_mass_in_cell()
+
     total_volume = cellj.oil_volume_in_cell() + celli.oil_volume_in_cell()
-    delta_m = 0.5*(mj -mi)*(1 - math.exp(-2*D(total_volume,total_time)*delta_t/pow(delta_x,2)))
+
+    delta_m = 0.5 * (mass_j - mass_i) * (1 - math.exp(-2 * D(total_volume, total_time) * delta_t / pow(delta_x, 2)))
     return delta_m
 
-def D(total_volume,total_time):
-    n = 3 #jakiś tam współczynnik
-    g = 9.81 #[m/s^2]
-    delta_density_ratio =  1029 - 900 / 1029 #gestosci[kg/m^3] wody morskiej i crude oil
-    kinematic_viscosity = 1.1889 * pow(10,-6) #[m^2/s] dla wody o zasoleniu 35g na 1kg wody
-    return (0.48/pow(n,2))*pow(pow(total_volume,2)*g*delta_density_ratio/pow(kinematic_viscosity,1/2),1/3)*pow(total_time,-1/2)
+
+def D(total_volume, total_time):
+    delta_density_ratio = SEA_WATER_DENSITY - INIT_OIL_DENSITY / SEA_WATER_DENSITY  # gestosci[kg/m^3] wody morskiej i crude oil
+    return (0.48 / pow(N, 2)) * pow(pow(total_volume, 2) * G * delta_density_ratio / pow(KINEMATIC_VISCOSITY, 1 / 2),
+                                    1 / 3) * pow(total_time, -1 / 2)

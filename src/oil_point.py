@@ -1,3 +1,4 @@
+from src.simulation_parameters import *
 class Oil_point():
 
 
@@ -8,12 +9,13 @@ class Oil_point():
         self.relatives_coordinates = [0,0]
         # coordinates of cell to with oil point is assigned
         self.assigned_cell = start_coordinates
-        self.current_emulsification_rate = 1.0 # zakładam że 100% ropa bo nie mogę nigdzie znaleźć info :/
-        self.density = 900 #[kg/m^3]
+        self.current_emulsification_rate = INIT_EMULSIFICATION_RATE
+        self.density = INIT_OIL_DENSITY #[kg/m^3]
         self.oil_volume =self.density * self.mass
 
 
     # def compute_evaporation(self):
+        # some draft of implementing evaporation
     #     K = 1.25 * pow(10, -3)  # [m/s] - mass transfer coefficient
     #     R = 8.314  # [J/(mol*K] - gas constant
     #     delta_t = 60  # [s] - iteration step

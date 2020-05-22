@@ -1,7 +1,7 @@
 import pygame
 import pygame.locals
 from src.board import Board
-from src.constants import X_START, Y_START, TOTAL_WEIGHT
+from src.simulation_parameters import X_START, Y_START, TOTAL_WEIGHT
 import pygame_gui
 
 from src.validators import is_valid_number, is_valid_float
@@ -29,7 +29,7 @@ class OilSpillSimulation(object):
         Main loop
         """
         # TODO: read coords for start simulation
-        self.board.map.set_start_point(X_START, Y_START, TOTAL_WEIGHT)
+        self.board.map.set_start_point(X_START, Y_START)
         while not self.handle_events():
 
             if self.started:
@@ -53,7 +53,6 @@ class OilSpillSimulation(object):
                     # hardcoded starting point
                     self.board.map.set_start_point(X_START,Y_START,TOTAL_WEIGHT)
                 else:
-                    #self.board.map.nextstate()
                     self.board.nextstate()
                     self.board.drawStates()
                 # TODO: Calling method drawing on map only
