@@ -245,6 +245,13 @@ class Board(object):
         Function performing one step of simulation.
         """
         self.total_time += SIMULATION_STEP_TIME
+
+        for (x,y) in self.map.get_particular_cells_coordinates(OIL):
+            for op in self.map.simulationArray[x][y].oil_points:
+                op.compute_evaporation(self.map.simulationArray[x][y].temp, len(self.map.simulationArray[x][y].oil_points))
+                op.compute_emulsification(self.map.simulationArray[x][y].wind[0])
+
+
         self.advection()
         self.spreading()
 
@@ -257,6 +264,7 @@ class Board(object):
         for op in self.oil_point_list.oil_points_array:
             print(len(self.oil_point_list.oil_points_array))
             (x, y) = op.assigned_cell
+            #delta_r w [m]
             delta_r_x = ALPHA * self.map.simulationArray[x][y].concurrent[0] * math.sin(
                 self.map.simulationArray[x][y].concurrent[1]) + BETA * self.map.simulationArray[x][y].wind[
                 0] * math.sin(self.map.simulationArray[x][y].wind[1])
@@ -268,8 +276,8 @@ class Board(object):
             if len(self.map.simulationArray[x][y].oil_points) == 0:
                 self.map.simulationArray[x][y].update_cell_type(SEA)
 
-            op.relatives_coordinates[0] += delta_r_x
-            op.relatives_coordinates[1] += delta_r_y
+            op.relatives_coordinates[0] += delta_r_x /1000 #zamiana jednostek z m na km
+            op.relatives_coordinates[1] += -1* delta_r_y /1000
 
             print(op.relatives_coordinates)
 

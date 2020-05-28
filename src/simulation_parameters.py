@@ -4,12 +4,14 @@
 SIMULATION_STEP_TIME = 3600 #[s] - 1 hour
 X_START = 100
 Y_START = 60
-TOTAL_WEIGHT = 400 #[tonnes]
+TOTAL_WEIGHT = 400 *1000 #[kg]
 CELL_LENGTH = 10000 #[m] - 10km
+NUMBER_OF_OIL_POINTS = 40
 
 # Oil initial parameters
-INIT_EMULSIFICATION_RATE = 1.0 # # zakładam że 100% ropa bo nie mogę nigdzie znaleźć info :/
+INIT_EMULSIFICATION_RATE = 0.3 # zakładam że 70% ropa bo nie mogę nigdzie znaleźć info :/
 INIT_OIL_DENSITY = 900 #[kg/m^3]
+INIT_CRUDE_OIL_BOILING_TMEP = 623.15 #[K]
 
 #Advection parameters
 ALPHA = 1.1

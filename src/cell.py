@@ -2,8 +2,9 @@ class Cell():
     def __init__(self, type):
         self.cell_type = type
         self.oil_points = []
-        self.wind = (20, 90)
-        self.concurrent = (0.42, 45)
+        self.wind = (8, 90) #[m/s]
+        self.concurrent = (0.12, 45) #[m/s]
+        self.temp = 288#[K]
 
     def update_cell_type(self, new_type):
         self.cell_type = new_type
