@@ -1,6 +1,7 @@
 import pygame
 import pygame.locals
 from src.board import Board
+from src.discretized_oil import DiscretizedOil
 from src.documentationOpener import openDocumentationFile
 from src.simulation_parameters import X_START, Y_START, TOTAL_WEIGHT
 import pygame_gui
@@ -28,11 +29,9 @@ class OilSpillSimulation(object):
         Main loop
         """
         self.board.map.set_start_point(X_START, Y_START)
-        clock = pygame.time.Clock()
         while not self.handle_events():
 
             if self.started:
-                clock.tick(30)
                 print("You have started simulation")
 
     def handle_events(self):
@@ -55,23 +54,21 @@ class OilSpillSimulation(object):
                         self.started = True
 
                     if event.ui_element == self.board.resetButton:
+                        print("pressed reset")
                         self.started = False
+                        self.board.map.reset_to_default_Map()
+                        self.board.__init__()
+
 
                     if event.ui_element == self.board.documentationButton:
                         openDocumentationFile()
 
-            if self.started:
-                if event.type == pygame.USEREVENT and event.ui_element == self.board.resetButton:
-                    self.started = False
-                    self.board.map.reset_to_default_Map()
-
-                    # hardcoded starting point
-                    self.board.map.set_start_point(X_START, Y_START, TOTAL_WEIGHT)
-
-                self.board.nextstate()
-                self.board.drawStates()
 
             self.board.manager.process_events(event)
+
+        if self.started:
+            self.board.nextstate()
+            self.board.drawStates()
 
         self.board.manager.update(time_delta)
         self.board.surface.blit(self.board.background, (0, 0))
