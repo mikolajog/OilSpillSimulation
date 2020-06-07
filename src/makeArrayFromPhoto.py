@@ -6,7 +6,7 @@ from src.cell import Cell
 
 
 def makeArrayFromPhoto():
-    img = cv2.imread('src/img/map2.png')
+    img = cv2.imread('src/img/map5km5km.png')
     res = cv2.resize(img, dsize=(200, 120), interpolation=cv2.INTER_CUBIC)
     newmap = np.empty((200, 120), dtype=object)
     for i in range(200):
