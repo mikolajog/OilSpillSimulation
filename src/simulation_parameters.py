@@ -5,7 +5,7 @@ SIMULATION_STEP_TIME = 3600 #[s] - 1 hour
 X_START = 70
 Y_START = 65
 TOTAL_WEIGHT = 400 *1000 #[kg]
-CELL_LENGTH = 10000 #[m] - 10km
+CELL_LENGTH = 5000 #[m] - 5km
 NUMBER_OF_OIL_POINTS = 40
 
 # Oil initial parameters
