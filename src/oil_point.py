@@ -14,9 +14,13 @@ class Oil_point():
         self.density = INIT_OIL_DENSITY #[kg/m^3]
         self.oil_volume =self.density * self.mass
         self.boiling_temp = INIT_CRUDE_OIL_BOILING_TMEP#[K]
+        #evaporated mass
+        self.F = 0.0
+        #poniżej to również wzór na update zmiany gęstości ropy, przy założeniu stałej gestośći wody morskiej
+        self.emulsion_density = (1-INIT_EMULSIFICATION_RATE)*((0.6*INIT_OIL_DENSITY -340)*self.F+INIT_OIL_DENSITY) + INIT_EMULSIFICATION_RATE*SEA_WATER_DENSITY
+        #print(self.mass)
 
-
-    def compute_evaporation(self,temp, op_in_cell):
+    def compute_evaporation(self,temp, op_in_cell,total_oil_mass):
         # some draft of implementing evaporation
         K = 1.25 * pow(10, -3)  # [m/s] - mass transfer coefficient
         R = 8.314  # [J/(mol*K] - gas constant
@@ -27,18 +31,29 @@ class Oil_point():
 
         #MI = 2.410*pow(10,-6)*(pow(self.boiling_temp, 2.847)*pow(self.density/SEA_WATER_DENSITY,-2.130))
         #print(MI)
-        x1 = 1/NUMBER_OF_OIL_POINTS #przyjmuje bardzo mocne prybliżenie, że w każdym oil poincie stosunek masy moleowej jest taki sam
+        x1 = self.mass/total_oil_mass#1/NUMBER_OF_OIL_POINTS #przyjmuje bardzo mocne prybliżenie, że w każdym oil poincie stosunek masy moleowej jest taki sam
 
         A = CELL_LENGTH*CELL_LENGTH/op_in_cell
 
         delta_mI = K *MI *P0I * x1 * A *delta_t / (R * temp)
 
         self.mass -= delta_mI
-        #print(self.mass)
+        self.F = delta_mI
+        # print("#####")
+        # print(delta_mI)
+        # print(self.mass)
 
     def compute_emulsification(self, wind_speed):
         #wind speed [m/s]
         delta_t = SIMULATION_STEP_TIME  # [s] - iteration step time
         delta_emulsification_rate = 2.0*pow(10,-6)*pow((wind_speed+1),2)*(1-self.current_emulsification_rate/0.7)*delta_t
+
         self.current_emulsification_rate += delta_emulsification_rate
-        print(delta_emulsification_rate)
+        # print("%%%%")
+        # print(delta_emulsification_rate)
+        # print(self.current_emulsification_rate)
+
+    #gestosc emulsji obliczac zawsze po obliczeniu emulsification i evaporation
+    def compute_density_of_emulsion(self):
+        self.emulsion_density = (1 - self.current_emulsification_rate) * (
+        (0.6 * INIT_OIL_DENSITY - 340) * self.F + INIT_OIL_DENSITY) + self.current_emulsification_rate * SEA_WATER_DENSITY
