@@ -11,7 +11,9 @@ def makeArrayFromPhoto():
     newmap = np.empty((120, 60), dtype=object)
     for i in range(120):
         for j in range(60):
-            if np.all(res[j][i] <= [255, 218, 170]) and np.all(res[j][i] >= [255, 218, 170]):
+            if(j>50):
+                newmap[i][j] = Cell(SEA)
+            elif np.all(res[j][i] <= [255, 218, 180]) and np.all(res[j][i] >= [255, 218, 150]):
                 newmap[i][j] = Cell(SEA)
             else:
                 newmap[i][j] = Cell(LAND)

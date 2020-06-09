@@ -45,6 +45,8 @@ class Board(object):
             text='Documentation',
             manager=self.manager)
 
+
+
         # Initlialize labels
         self.titleLablel = pygame_gui.elements.UIButton(
             relative_rect=pygame.Rect(POSITION_TITLELABEL, SIZE_TITLELABEL),
@@ -52,6 +54,10 @@ class Board(object):
             manager=self.manager,
             tool_tip_text="This is a simulation of DeepWater Horizon Oil Spill by Zuzanna Smiech and Mikolaj Ogarek.")
 
+        self.timeLabel = pygame_gui.elements.UILabel(
+            relative_rect=pygame.Rect(POSITION_TIMELABEL, SIZE_TIMELABEL),
+            text='Time[h]: 0.0',
+            manager=self.manager)
 
         # Initialize map
         self.map = Map()
@@ -78,16 +84,16 @@ class Board(object):
         #draw logos
         img = pygame.image.load("src/img/logoagh.jpg")
         img = pygame.transform.scale(img, (135, 135))
-        self.surface.blit(img, (48, 660))
+        self.surface.blit(img, (48, 600))
 
         # draw logos
         img = pygame.image.load("src/img/logoOur.png")
         img = pygame.transform.scale(img, (168, 135))
-        self.surface.blit(img, (888, 660))
+        self.surface.blit(img, (848, 600))
 
         # draw border lines
         pygame.draw.rect(self.surface, (37, 41, 46), (
-            50 - MARGIN_THICKNESS, 50 - MARGIN_THICKNESS, 1000 + 2 * MARGIN_THICKNESS, 600 + 2 * MARGIN_THICKNESS))
+            50 - MARGIN_THICKNESS, 50 - MARGIN_THICKNESS, 960 + 2 * MARGIN_THICKNESS, 480 + 2 * MARGIN_THICKNESS))
 
         for x, y in self.map.get_particular_cells_coordinates(LAND):
             pygame.draw.rect(self.surface, GREEN,
@@ -110,7 +116,7 @@ class Board(object):
     def drawStates(self):
         # draw border lines
         pygame.draw.rect(self.surface, (37, 41, 46), (
-            50 - MARGIN_THICKNESS, 50 - MARGIN_THICKNESS, 1000 + 2 * MARGIN_THICKNESS, 600 + 2 * MARGIN_THICKNESS))
+            50 - MARGIN_THICKNESS, 50 - MARGIN_THICKNESS, 960 + 2 * MARGIN_THICKNESS, 480 + 2 * MARGIN_THICKNESS))
 
         for x, y in self.map.get_particular_cells_coordinates(LAND):
             pygame.draw.rect(self.surface, GREEN,
@@ -135,6 +141,7 @@ class Board(object):
         Function performing one step of simulation.
         """
         self.total_time += SIMULATION_STEP_TIME
+        self.timeLabel.set_text("Time[h]: " + str(self.total_time/3600))
         self.step +=1
         for (x,y) in self.map.get_particular_cells_coordinates(OIL):
             for op in self.map.simulationArray[x][y].oil_points:

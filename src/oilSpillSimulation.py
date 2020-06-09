@@ -70,6 +70,7 @@ class OilSpillSimulation(object):
             self.board.nextstate()
             self.board.drawStates()
 
+        print(self.board.total_time)
         self.board.manager.update(time_delta)
         self.board.surface.blit(self.board.background, (0, 0))
         self.board.draw()
