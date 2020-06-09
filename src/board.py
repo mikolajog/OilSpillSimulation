@@ -160,8 +160,8 @@ class Board(object):
         # at the begining all oil poitns are in start cell
         self.map.simulationArray[X_START][Y_START].oil_points.extend(new_oil_points.oil_points_array[:])  # .copy()
 
-        if self.step%6 == 0 : #tz że minało 3hx6 czyli jeden dzień
-            self.update_wind_and_currents(round(self.step/6))
+        if self.step%8 == 0 : #tz że minało 3hx8 czyli jeden dzień
+            self.update_wind_and_currents(round(self.step/8))
 
 
 
